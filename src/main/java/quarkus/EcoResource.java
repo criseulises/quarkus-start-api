@@ -8,6 +8,6 @@ public class EcoResource {
 
     @GET
     public String greet() {
-        return "Hello Eco!";
+        return "HelloEco!";
     }
 }
