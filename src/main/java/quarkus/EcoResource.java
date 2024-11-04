@@ -7,7 +7,26 @@ import jakarta.ws.rs.Path;
 public class EcoResource {
 
     @GET
-    public String greet() {
-        return "Hello World!";
+    @Path("greet")
+    public String greet(){
+        return "Hello!!";
+    }
+
+    @GET
+    @Path("/day")
+    public String day() {
+        return "Good Morning!";
+    }
+
+    @GET
+    @Path("/afternoon")
+    public String afternoon() {
+        return "Good Afternoon!";
+    }
+
+    @GET
+    @Path("/night")
+    public String night() {
+        return "Good Night!";
     }
 }
