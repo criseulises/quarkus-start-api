@@ -2,31 +2,31 @@ package quarkus;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
+
+import java.util.Optional;
 
 @Path("/greet")
 public class EcoResource {
 
     @GET
-    @Path("greet")
-    public String greet(){
-        return "Hello!!";
+    public String greetings(@QueryParam("message") String message){
+        return Optional.ofNullable(message).map(m -> "> " + m).orElse("There is not messages");
     }
 
     @GET
-    @Path("/day")
-    public String day() {
-        return "Good Morning!";
+    @Path("/{name}")
+    public String greet(@PathParam("name") String name){
+        return "Hi, " + name;
     }
 
     @GET
-    @Path("/afternoon")
-    public String afternoon() {
-        return "Good Afternoon!";
+    @Path("/{name}/uppercase")
+    public String greetUpperCase(@PathParam("name") String name){
+        return "HI, " + name.toUpperCase();
     }
 
-    @GET
-    @Path("/night")
-    public String night() {
-        return "Good Night!";
-    }
+
+
 }
