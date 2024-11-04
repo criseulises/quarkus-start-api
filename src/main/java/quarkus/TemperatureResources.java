@@ -16,6 +16,7 @@ public class TemperatureResources {
     private List<Temperature> temperatures = new ArrayList<>();
 
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Temperature> addTemperature(Temperature temperature) {
         temperatures.add(temperature);
         return temperatures;
