@@ -1,6 +1,7 @@
-package quarkus;
+package quarkus.resources;
 
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -9,6 +10,7 @@ import quarkus.repository.BookRepository;
 
 import java.util.List;
 
+@Transactional
 @Path("/books")
 public class BookResource {
 
