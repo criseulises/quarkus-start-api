@@ -23,6 +23,8 @@ public class Book {
 
     private String description;
 
+    private String genre;
+
     @CreationTimestamp
     private LocalDate createDate;
 
@@ -69,6 +71,13 @@ public class Book {
         this.description = description;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
     public LocalDate getCreateDate() {
         return createDate;
