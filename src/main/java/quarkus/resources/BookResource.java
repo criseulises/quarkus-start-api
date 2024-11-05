@@ -1,12 +1,10 @@
 package quarkus.resources;
 
-import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import quarkus.entities.Book;
-import quarkus.repository.BookRepository;
 
 import java.util.List;
 
@@ -14,18 +12,14 @@ import java.util.List;
 @Path("/books")
 public class BookResource {
 
-    @Inject
-    private BookRepository bookRepository;
-
-
     @GET
     public List<Book> listBooks() {
-        return bookRepository.listAll();
+        return Book.listAll();
     }
 
     @POST
     public Book insertBook(Book book) {
-        bookRepository.persist(book);
+        book.persist();
         return book;
     }
 }
