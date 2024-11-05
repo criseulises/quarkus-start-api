@@ -3,6 +3,7 @@ package quarkus.resources;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
 import quarkus.entities.Book;
 import quarkus.repository.BookRepository;
 
@@ -38,10 +39,23 @@ public class BookResource {
 
     @DELETE
     @Path("/{id}")
-    public String deleteBook(@PathParam("id") Long id) {
-        if(bookRepository.deleteById(id)){
-            return "Book with id " + id + " deleted";
+    public void deleteBook(@PathParam("id") Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Book updateBook(@PathParam("id") Long id, Book book) {
+        Book updatedBook = bookRepository.findById(id);
+        if (updatedBook != null) {
+            updatedBook.setTitle(book.getTitle());
+            updatedBook.setPublishDate(book.getPublishDate());
+            updatedBook.setNumPages(book.getNumPages());
+            updatedBook.setDescription(book.getDescription());
+            bookRepository.persist(updatedBook);
+            return updatedBook;
         }
-        return "Book with id " + id + " not found";
+        throw new NoSuchElementException("Book with id " + id + " not found");
     }
 }
