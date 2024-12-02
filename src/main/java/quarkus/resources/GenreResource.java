@@ -2,6 +2,7 @@ package quarkus.resources;
 
 
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -22,17 +23,27 @@ public class GenreResource {
     private GenreRepository genreRepository;
 
     @GET
+    public List<Genre> listAll() {
+        return genreRepository.listAll();
+    }
+
+    @GET
     @Path("automate")
     public List<Genre> list(@QueryParam("page") @DefaultValue("1") int page) {
-        Page pageObj = new Page(page-1, 5);
-        return genreRepository.findAll(Sort.descending("createdAt")).page(pageObj).list();
+        Page pageObj = new Page(page - 1, 5);
+        var query = genreRepository.findAll(Sort.descending("createdAt")).page(pageObj).list();
+        return query;
     }
 
     @GET
     @Path("query")
-    public PaginatedResponse<Genre> listQuery(@QueryParam("page") @DefaultValue("1") int page) {
-        Page pageObj = new Page(page-1, 5);
+    public PaginatedResponse<Genre> listQuery(@QueryParam("page") @DefaultValue("1") int page,
+                                              @QueryParam("filter") String filter) {
+        Page pageObj = new Page(page - 1, 5);
         var query = genreRepository.findAll(Sort.descending("createdAt")).page(pageObj);
+        if (filter != null) {
+            query.filter("name.like", Parameters.with("name", "%" + filter + "%"));
+        }
         return new PaginatedResponse<>(query);
     }
 
