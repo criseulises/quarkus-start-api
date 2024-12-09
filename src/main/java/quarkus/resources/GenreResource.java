@@ -50,6 +50,7 @@ public class GenreResource {
     @POST
     @Transactional
     public Response create(Genre genre) {
+        System.out.println(genre.getName());
         genreRepository.persist(genre);
         return Response.created(URI.create("/genres/" + genre.getId())).entity(genre).build();
     }
