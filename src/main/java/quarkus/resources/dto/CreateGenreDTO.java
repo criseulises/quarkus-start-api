@@ -1,4 +1,4 @@
 package quarkus.resources.dto;
 
-public record CreateGenreDTO() {
+public record CreateGenreDTO(String name) {
 }

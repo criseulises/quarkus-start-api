@@ -25,11 +25,9 @@ public class Genre {
     private String name;
 
     @CreationTimestamp
-    @JsonIgnore
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Long getId() {
