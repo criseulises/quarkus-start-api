@@ -1,6 +1,7 @@
 package quarkus.resources;
 
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.core.Response;
 import quarkus.entities.Genre;
 import quarkus.repository.GenreRepository;
 import quarkus.resources.dto.CreateGenreDTO;
+import quarkus.resources.dto.GenreResponseDTO;
 import quarkus.resources.dto.UpdateGenreDTO;
 import quarkus.resources.mapper.GenreMapper;
 import quarkus.resources.mapper.GenreMapperImpl;
@@ -46,14 +48,22 @@ public class GenreResource {
 
     @GET
     @Path("query")
-    public PaginatedResponse<Genre> listQuery(@QueryParam("page") @DefaultValue("1") int page,
+    public PaginatedResponse<GenreResponseDTO> listQuery(@QueryParam("page") @DefaultValue("1") int page,
                                               @QueryParam("filter") String filter) {
-        Page pageObj = new Page(page - 1, 5);
-        var query = genreRepository.findAll(Sort.descending("createdAt")).page(pageObj);
-        if (filter != null) {
-            query.filter("name.like", Parameters.with("name", "%" + filter + "%"));
-        }
-        return new PaginatedResponse<>(query);
+//        Page pageObj = new Page(page - 1, 5);
+//        var query = genreRepository.findAll(Sort.descending("createdAt")).page(pageObj);
+//        if (filter != null) {
+//            query.filter("name.like", Parameters.with("name", "%" + filter + "%"));
+//        }
+//        return new PaginatedResponse<>(query);
+
+
+        PanacheQuery<Genre> query = genreRepository.findPage(page);
+        PanacheQuery<GenreResponseDTO> newQuery = query.project(GenreResponseDTO.class);
+
+        System.out.println(newQuery.toString());
+        return new PaginatedResponse<>(newQuery);
+
     }
 
     @POST
@@ -62,7 +72,8 @@ public class GenreResource {
         System.out.println(genre);
         Genre entity = genreMapper.fromCreate(genre);
         genreRepository.persist(entity);
-        return Response.created(URI.create("/genres/" + entity.getId())).entity(entity).build();
+        var representation  = genreMapper.present(entity);
+        return Response.created(URI.create("/genres/" + entity.getId())).entity(representation).build();
     }
 
     @POST
@@ -77,23 +88,24 @@ public class GenreResource {
 
     @GET
     @Path("{id}")
-    public Genre get(@PathParam("id") Long id) {
+    public GenreResponseDTO get(@PathParam("id") Long id) {
         return genreRepository
                 .findByIdOptional(id)
+                .map(genreMapper::present)
                 .orElseThrow(() -> new NoSuchElementException("Genre " + id + " not found"));
     }
 
     @PUT
     @Path("{id}")
     @Transactional
-    public Genre update(@PathParam("id") Long id, UpdateGenreDTO dto) {
+    public GenreResponseDTO update(@PathParam("id") Long id, UpdateGenreDTO dto) {
         Genre found = genreRepository
                 .findByIdOptional(id)
                 .orElseThrow(() -> new NoSuchElementException("Genre " + id + " not found"));
 
         genreMapper.update(dto, found);
         genreRepository.persist(found);
-        return found;
+        return genreMapper.present(found);
     }
 
     @DELETE
