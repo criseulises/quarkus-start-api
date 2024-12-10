@@ -1,4 +1,8 @@
 package quarkus.resources.dto;
 
-public record CreateGenreDTO(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+import javax.xml.transform.Source;
+
+public record CreateGenreDTO(@NotBlank String name) {
 }

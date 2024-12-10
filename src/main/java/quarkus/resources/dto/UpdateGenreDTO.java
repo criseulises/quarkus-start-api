@@ -1,4 +1,6 @@
 package quarkus.resources.dto;
 
-public record UpdateGenreDTO(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UpdateGenreDTO(@NotBlank String name) {
 }

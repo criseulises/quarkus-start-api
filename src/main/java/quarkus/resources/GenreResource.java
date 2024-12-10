@@ -7,6 +7,7 @@ import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import quarkus.entities.Genre;
@@ -16,6 +17,7 @@ import quarkus.resources.dto.GenreResponseDTO;
 import quarkus.resources.dto.UpdateGenreDTO;
 import quarkus.resources.mapper.GenreMapper;
 import quarkus.resources.mapper.GenreMapperImpl;
+import quarkus.utils.GenreValidator;
 import quarkus.utils.PaginatedResponse;
 
 import java.net.URI;
@@ -32,6 +34,8 @@ public class GenreResource {
     @Inject
     GenreMapper genreMapper;
 
+    @Inject
+    GenreValidator validator;
 
     @GET
     public List<Genre> listAll() {
@@ -69,6 +73,11 @@ public class GenreResource {
     @POST
     @Transactional
     public Response create(CreateGenreDTO genre) {
+        var error = this.validator.validateGenre(genre);
+        if(error.isPresent()){
+            String msg = error.get();
+            return Response.status(400).entity(msg).build();
+        }
         System.out.println(genre);
         Genre entity = genreMapper.fromCreate(genre);
         genreRepository.persist(entity);
@@ -98,7 +107,7 @@ public class GenreResource {
     @PUT
     @Path("{id}")
     @Transactional
-    public GenreResponseDTO update(@PathParam("id") Long id, UpdateGenreDTO dto) {
+    public GenreResponseDTO update(@PathParam("id") Long id, @Valid UpdateGenreDTO dto) {
         Genre found = genreRepository
                 .findByIdOptional(id)
                 .orElseThrow(() -> new NoSuchElementException("Genre " + id + " not found"));
